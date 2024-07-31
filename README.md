@@ -15,5 +15,8 @@ https://attack.mitre.org/techniques/T1027/001/
 IEX(New-Object System.Net.WebClient).DownloadString("https://raw.githubusercontent.com/The-Viper-One/Invoke-PowerIncrease/main/Invoke-PowerIncrease.ps1")
 
 # Inflate a source file and write filestream to destination path
-Invoke-PowerIncrease -SourceFilePath "C:\buff.exe" -TargetSizeMB 51 -DestinationFilePath "C:\buffnew.exe"
+Invoke-PowerIncrease -SourceFilePath "$HOME\buff.exe" -TargetSizeMB 51 -DestinationFilePath "$HOME\buffnew.exe"
+
+# Download from URL, inflate in memory before writing to disk
+Invoke-PowerIncrease -URL "https://example.com/file.exe" -TargetSizeMB 75 -DestinationFilePath "$HOME\buffnew.exe"
 ```
