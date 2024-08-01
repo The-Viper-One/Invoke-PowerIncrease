@@ -41,14 +41,17 @@ Invoke-PowerIncrease -URL "http://example.com/file.exe" -TargetSizeMB 51 -Destin
         [string]$DestinationFilePath
     )
 
-    if ($null -eq $SourceFilePath -and $null -eq $URL) {
+    if (!$SourceFilePath -and !$URL) {
         Write-Error "Either -SourceFilePath or -URL must be specified."
+        return
+    } elseif ($SourceFilePath -and $URL) {
+        Write-Error "-SourceFilePath and -URL cannot be used together. Please specify only one."
         return
     }
 
     $contentBytes = $null
 
-    if ($null -ne $URL) {
+    if ($URL) {
         try {
             $response = Invoke-WebRequest -Uri $URL -UseBasicParsing
             $contentBytes = $response.Content
@@ -57,7 +60,7 @@ Invoke-PowerIncrease -URL "http://example.com/file.exe" -TargetSizeMB 51 -Destin
             Write-Error "Failed to download file from URL: $_"
             return
         }
-    } elseif ($null -ne $SourceFilePath) {
+    } elseif ($SourceFilePath) {
         if (-not (Test-Path $SourceFilePath)) {
             Write-Error "Source file doesn't exist: $SourceFilePath"
             return
@@ -79,7 +82,7 @@ Invoke-PowerIncrease -URL "http://example.com/file.exe" -TargetSizeMB 51 -Destin
     $PaddingSizeBytes = $TargetSizeBytes - $SourceFileSize
 
     $PaddingBytes = New-Object byte[] $PaddingSizeBytes
-    [System.Random]::new().NextBytes($PaddingBytes)  # Fill with random bytes
+    [System.Random]::new().NextBytes($PaddingBytes)
 
     try {
         $inflatedContent = New-Object byte[] $TargetSizeBytes
